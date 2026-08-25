@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Wedding Services - AKR TENT & DECORATION</title>
+    
+    <link rel="icon" type="image/png" href="share-banner.png">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Montserrat:wght@400;500;600;700&family=Great+Vibes&family=Cinzel:wght@600;700;800&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --gold: #ffd700;
+            --dark: #0b0b0b;
+            --panel-bg: rgba(20, 20, 20, 0.95);
+            --gold-light: rgba(255, 215, 0, 0.1);
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            background-color: var(--dark);
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* --- Header --- */
+        .header {
+            text-align: center;
+            padding: 40px 15px;
+            background: radial-gradient(circle at center, #1a1608 0%, var(--dark) 100%);
+            border-bottom: 2px solid var(--gold);
+        }
+
+        .header h1 {
+            font-family: 'Cinzel Decorative', serif;
+            color: var(--gold);
+            font-size: clamp(1.8rem, 6vw, 3rem);
+            margin: 0;
+            letter-spacing: 2px;
+        }
+
+        .header h2 {
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(1.2rem, 4vw, 2rem);
+            margin: 5px 0;
+            color: #eee;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            background: rgba(0,0,0,0.6);
+            color: var(--gold);
+            padding: 8px 15px;
+            border: 1px solid var(--gold);
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            z-index: 100;
+        }
+
+        /* --- Grid System --- */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px 20px 80px 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            color: var(--gold);
+            font-family: 'Cinzel', serif;
+            margin: 40px 0 20px;
+            font-size: clamp(1.4rem, 4vw, 1.8rem);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .service-card {
+            position: relative;
+            background: var(--panel-bg);
+            border: 1px solid rgba(255, 215, 0, 0.25);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: 0.4s ease;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .service-card:hover {
+            border-color: var(--gold);
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(255, 215, 0, 0.2);
+        }
+
+        .service-card.mode-landscape { height: auto; }
+        .service-card.mode-landscape .img-wrapper { position: relative; height: 220px; width: 100%; background: #111; }
+        .service-card.mode-landscape .service-info { position: relative; padding: 18px 16px; background: rgba(0, 0, 0, 0.02); border-top: 1px solid rgba(255, 255, 255, 0.08); }
+
+        .service-card.mode-portrait { height: 350px; justify-content: flex-end; }
+        .service-card.mode-portrait .img-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #111; }
+        .service-card.mode-portrait .service-info { position: relative; z-index: 2; padding: 16px 14px; background: rgba(0, 0, 0, 0.02); border-top: 1px solid rgba(255, 255, 255, 0.1); }
+
+        .img-wrapper { display: flex; align-items: center; justify-content: center; overflow: hidden; background: #151515; }
+        .img-wrapper img, .img-wrapper video { position: absolute; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.8s ease-in-out, transform 0.8s ease; transform: scale(1.04); pointer-events: none; }
+        .img-wrapper img.active, .img-wrapper video.active { opacity: 1; transform: scale(1); }
+
+        .placeholder-text { color: #777; font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase; }
+        .service-info { text-align: center; }
+        .service-info h3 { color: var(--gold); margin: 0 0 4px; font-family: 'Cinzel', serif; font-size: 1.2rem; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95); }
+        .service-info p { font-size: 0.88rem; color: #ffffff; font-weight: 500; line-height: 1.4; margin: 0; text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95); }
+
+        /* --- FULLSCREEN GALLERY MODAL --- */
+        .gallery-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 5, 5, 0.96);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 20px 16px 80px 16px;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        .modal-top-bar {
+            position: sticky; top: 0; z-index: 10;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(5, 5, 5, 0.9);
+            padding: 12px 10px;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-title { color: var(--gold); font-family: 'Cinzel', serif; font-size: 1.3rem; margin: 0; }
+        .close-modal-btn {
+            background: rgba(255, 215, 0, 0.15); border: 1px solid var(--gold); color: var(--gold);
+            font-size: 1.4rem; width: 38px; height: 38px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s ease;
+        }
+        .close-modal-btn:hover { background: var(--gold); color: #000; }
+
+        .masonry-container { column-count: 3; column-gap: 16px; width: 100%; max-width: 1200px; margin: 0 auto; }
+        @media (max-width: 900px) { .masonry-container { column-count: 2; column-gap: 12px; } }
+        @media (max-width: 550px) { .masonry-container { column-count: 1; } }
+
+        .masonry-item {
+            break-inside: avoid; margin-bottom: 16px; background: #111;
+            border: 1px solid rgba(255, 215, 0, 0.2); border-radius: 14px;
+            overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.7);
+            position: relative;
+            -webkit-touch-callout: none !important; user-select: none !important;
+        }
+
+        .masonry-item img, .masonry-item video {
+            width: 100%; height: auto; display: block; object-fit: cover; pointer-events: none !important;
+        }
+
+        @keyframes highlightShared {
+            0% { box-shadow: 0 0 0px var(--gold); transform: scale(1); }
+            50% { box-shadow: 0 0 40px var(--gold); transform: scale(1.02); border-color: var(--gold); }
+            100% { box-shadow: 0 4px 16px rgba(0,0,0,0.7); transform: scale(1); }
+        }
+        .highlight-active {
+            animation: highlightShared 2.5s ease-in-out;
+            border: 2px solid var(--gold) !important;
+            z-index: 5;
+        }
+
+        /* --- CUSTOM ACTION MENU --- */
+        #custom-action-menu {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: rgba(18, 18, 18, 0.98);
+            border: 1px solid var(--gold);
+            border-radius: 16px;
+            padding: 24px 20px;
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            gap: 14px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.9);
+            opacity: 0;
+            transition: 0.25s ease;
+            width: 85%;
+            max-width: 340px;
+            box-sizing: border-box;
+        }
+
+        #custom-action-menu.active { display: flex; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+        .menu-header {
+            color: var(--gold); text-align: center; font-family: 'Cinzel', serif;
+            font-size: 1.15rem; border-bottom: 1px solid rgba(255,215,0,0.2); padding-bottom: 10px; margin-bottom: 2px;
+        }
+
+        /* --- NEW STYLES FOR IMAGE-ONLY BUTTONS --- */
+        .img-btn {
+            background: transparent;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            width: 100%;
+            display: block;
+            transition: transform 0.2s ease;
+            text-decoration: none;
+            border-radius: 8px; /* Optional: if images need slight rounding */
+        }
+
+        .img-btn:hover {
+            transform: scale(1.03); /* Hover करने पर बटन थोड़ा ज़ूम होगा */
+        }
+
+        .img-btn img {
+            width: 100%; /* बटन के साइज़ में फिट होने के लिए */
+            height: auto;
+            display: block;
+            object-fit: contain;
+        }
+
+        /* Cancel बटन के लिए स्टाइल */
+        .action-btn {
+            background: rgba(255,215,0,0.08); color: var(--gold);
+            border: 1px solid rgba(255, 215, 0, 0.35); padding: 12px 16px;
+            border-radius: 10px; font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem; font-weight: 500; cursor: pointer; text-align: center;
+            transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;
+            text-decoration: none; width: 100%; box-sizing: border-box;
+        }
+        .action-btn:hover { background: var(--gold); color: #000; }
+        
+        .cancel-btn {
+            color: #fff !important; 
+            border-color: #555 !important; 
+            background: transparent !important;
+            margin-top: 5px;
+        }
+
+        .menu-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); z-index: 1999; display: none;
+        }
+
+        #copy-toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: var(--gold); color: #000; padding: 10px 20px; border-radius: 30px;
+            font-weight: 600; font-size: 0.9rem; z-index: 3000; transition: 0.3s ease; box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+        #copy-toast.show { transform: translateX(-50%) translateY(0); }
+
+        .mobile-cta {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: var(--panel-bg); padding: 15px 0; display: flex; justify-content: space-around;
+            border-top: 1px solid var(--gold); z-index: 100;
+        }
+        .cta-icon { text-decoration: none; color: var(--gold); font-weight: 600; font-size: 0.9rem; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        @media (min-width: 768px) { .mobile-cta { display: none; } .container { padding-top: 40px; } }
+    </style>
+</head>
+<body oncontextmenu="return false;" ondragstart="return false;" onselectstart="return false;">
+
+    <a href="index.html" class="back-btn">← Home</a>
+
+    <div class="header">
+        <h1>AKR TENT & DECORATION</h1>
+        <h2>Premium Wedding Services</h2>
+    </div>
+
+    <div class="container">
+        <h2 class="section-title">Pre-Wedding</h2>
+        <div class="service-grid">
+            <div class="service-card mode-landscape" id="card-haldi" onclick="openGallery('carousel-haldi', 'Haldi Ceremony')">
+                <div class="img-wrapper" id="carousel-haldi"><span class="placeholder-text">Loading Haldi...</span></div>
+                <div class="service-info"><h3>Haldi</h3><p>Beautiful floral and yellow-themed setup.</p></div>
+            </div>
+            
+            <div class="service-card mode-landscape" id="card-mehendi" onclick="openGallery('carousel-mehendi', 'Mehendi Ceremony')">
+                <div class="img-wrapper" id="carousel-mehendi"><span class="placeholder-text">Loading Mehendi...</span></div>
+                <div class="service-info"><h3>Mehendi</h3><p>Traditional swings and aesthetic decor.</p></div>
+            </div>
+
+            <div class="service-card mode-landscape" id="card-sangeet" onclick="openGallery('carousel-sangeet', 'Sangeet Night')">
+                <div class="img-wrapper" id="carousel-sangeet"><span class="placeholder-text">Loading Sangeet...</span></div>
+                <div class="service-info"><h3>Sangeet</h3><p>Glamorous dance floor and lighting.</p></div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Main Wedding</h2>
+        <div class="service-grid">
+            <div class="service-card mode-landscape" id="card-mandap" onclick="openGallery('carousel-mandap', 'Royal Mandap Setup')">
+                <div class="img-wrapper" id="carousel-mandap"><span class="placeholder-text">Loading Mandap...</span></div>
+                <div class="service-info"><h3>Royal Mandap</h3><p>Divine setup for sacred pheras.</p></div>
+            </div>
+
+            <div class="service-card mode-landscape" id="card-stage" onclick="openGallery('carousel-stage', 'Stage & Jaimala')">
+                <div class="img-wrapper" id="carousel-stage"><span class="placeholder-text">Loading Stage...</span></div>
+                <div class="service-info"><h3>Stage & Jaimala</h3><p>Luxury stage for grand couple entry.</p></div>
+            </div>
+
+            <div class="service-card mode-landscape" id="card-pandal" onclick="openGallery('carousel-pandal', 'Pandal & Structure')">
+                <div class="img-wrapper" id="carousel-pandal"><span class="placeholder-text">Loading Pandal...</span></div>
+                <div class="service-info"><h3>Pandal</h3><p>Spacious, weather-proof structures.</p></div>
+            </div>
+            
+            <div class="service-card mode-landscape" id="card-entry" onclick="openGallery('carousel-entry', 'Entry Gate Setup')">
+                <div class="img-wrapper" id="carousel-entry"><span class="placeholder-text">Loading Entry Gate...</span></div>
+                <div class="service-info"><h3>Entry Gate</h3><p>Grand entrance for your special day.</p></div>
+            </div>
+            
+            <div class="service-card mode-landscape" id="card-event" onclick="openGallery('carousel-event', 'Wedding Event Details')">
+                <div class="img-wrapper" id="carousel-event"><span class="placeholder-text">Loading Wedding Event...</span></div>
+                <div class="service-info"><h3>Wedding Event</h3><p>Beautiful moments and event decor.</p></div>
+            </div>
+            
+            <div class="service-card mode-landscape" id="card-catering" onclick="openGallery('carousel-catering', 'Catering Setup')">
+                <div class="img-wrapper" id="carousel-catering"><span class="placeholder-text">Loading Catering...</span></div>
+                <div class="service-info"><h3>Catering Decor</h3><p>Premium food stalls and dining setups.</p></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GALLERY MODAL -->
+    <div id="gallery-modal" class="gallery-modal">
+        <div class="modal-top-bar">
+            <h3 class="modal-title" id="modal-title-text">Event Gallery</h3>
+            <button class="close-modal-btn" onclick="closeGallery()" title="Close">✕</button>
+        </div>
+        <div class="masonry-container" id="modal-masonry-content"></div>
+    </div>
+
+    <!-- CUSTOM ACTION MENU (NOW USING ONLY IMAGES FOR BUTTONS) -->
+    <div class="menu-overlay" id="menu-overlay" onclick="closeActionMenu()"></div>
+    <div id="custom-action-menu">
+        <div class="menu-header">Select Option</div>
+        
+        <!-- Button 1: Image Only -->
+        <a class="img-btn" id="btn-inquiry" target="_blank">
+            <img src="INQUERY.PNG" alt="Inquiry">
+        </a>
+        
+        <!-- Button 2: Image Only -->
+        <a class="img-btn" id="btn-whatsapp-share" target="_blank">
+            <img src="SHARE.PNG" alt="Share">
+        </a>
+        
+        <!-- Button 3: Image Only -->
+        <button class="img-btn" id="btn-other-share">
+            <img src="OTHER.PNG" alt="Other">
+        </button>
+        
+        <!-- Cancel Button (Kept as text for usability) -->
+        <button class="action-btn cancel-btn" onclick="closeActionMenu()">Cancel</button>
+    </div>
+
+    <div id="copy-toast">Link Copied Successfully!</div>
+
+    <div class="mobile-cta">
+        <a href="tel:+918839185475" class="cta-icon">📞 Call</a>
+        <a href="https://wa.me/918839185475" class="cta-icon">💬 WhatsApp</a>
+    </div>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw-JpfJU07YM3ZE5KnskBgwZqFZ6ppb1HmsDf784_bhf39CkHiVMiNjHOmbtbXrQGbQ-A/exec";
+
+        const categories = {
+            "carousel-haldi": { tag: "haldi", cardId: "card-haldi" },
+            "carousel-mehendi": { tag: "mehendi", cardId: "card-mehendi" },
+            "carousel-sangeet": { tag: "sangeet", cardId: "card-sangeet" },
+            "carousel-mandap": { tag: "mandap", cardId: "card-mandap" },
+            "carousel-stage": { tag: "stage", cardId: "card-stage" },
+            "carousel-pandal": { tag: "pandal", cardId: "card-pandal" },
+            "carousel-entry": { tag: "entry", cardId: "card-entry" },
+            "carousel-event": { tag: "event", cardId: "card-event" },
+            "carousel-catering": { tag: "catering", cardId: "card-catering" }
+        };
+
+        const eventImagesStore = {};
+        
+        let pressTimer;
+        let currentGalleryKey = "";
+        let currentGalleryTitle = "";
+        let currentSelectedId = "";
+
+        function isVideo(url) {
+            if (!url) return false;
+            const lowerUrl = url.toLowerCase();
+            return lowerUrl.includes('.mp4') || lowerUrl.includes('.webm') || lowerUrl.includes('.mov') || lowerUrl.includes('video/upload');
+        }
+
+        function getUniqueId(url) {
+            if (!url) return "img1";
+            const cleanUrl = url.split('?')[0];
+            const parts = cleanUrl.split('/');
+            const lastPart = parts[parts.length - 1] || parts[parts.length - 2] || "img";
+            return lastPart.substring(lastPart.length - 8).replace(/[^a-zA-Z0-9]/g, '');
+        }
+
+        function formatImageUrl(url, width = 600) {
+            if (!url) return "";
+            if (isVideo(url)) return url;
+            const driveMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
+            if (driveMatch && driveMatch[1]) {
+                return `https://lh3.googleusercontent.com/d/${driveMatch[1]}=w${width}`;
+            }
+            return url;
+        }
+
+        function updateCardOrientation(cardElem, mediaElem) {
+            if (!cardElem || !mediaElem) return;
+            let h = mediaElem.naturalHeight || mediaElem.videoHeight || 0;
+            let w = mediaElem.naturalWidth || mediaElem.videoWidth || 0;
+            
+            if (h > w && h !== 0) {
+                cardElem.classList.remove("mode-landscape");
+                cardElem.classList.add("mode-portrait");
+            } else if (w !== 0) {
+                cardElem.classList.remove("mode-portrait");
+                cardElem.classList.add("mode-landscape");
+            }
+        }
+
+        function createCarousel(containerId, cardId, items) {
+            const container = document.getElementById(containerId);
+            const cardElem = document.getElementById(cardId);
+            if (!container) return;
+
+            if (!items || items.length === 0) {
+                container.innerHTML = `<span class="placeholder-text">No Media</span>`;
+                return;
+            }
+
+            container.innerHTML = "";
+            const mediaElements = [];
+
+            let firstMedia;
+            if (isVideo(items[0].url)) {
+                firstMedia = document.createElement("video");
+                firstMedia.src = items[0].url;
+                firstMedia.muted = true;
+                firstMedia.autoplay = true;
+                firstMedia.loop = true;
+                firstMedia.playsInline = true;
+                firstMedia.onloadedmetadata = () => updateCardOrientation(cardElem, firstMedia);
+            } else {
+                firstMedia = document.createElement("img");
+                firstMedia.src = formatImageUrl(items[0].url, 600);
+                firstMedia.onload = () => updateCardOrientation(cardElem, firstMedia);
+            }
+            
+            firstMedia.classList.add("active");
+            container.appendChild(firstMedia);
+            mediaElements.push(firstMedia);
+
+            if (items.length <= 1) return;
+
+            for (let i = 1; i < items.length; i++) {
+                let media;
+                if (isVideo(items[i].url)) {
+                    media = document.createElement("video");
+                    media.muted = true;
+                    media.autoplay = true;
+                    media.loop = true;
+                    media.playsInline = true;
+                    media.dataset.src = items[i].url;
+                } else {
+                    media = document.createElement("img");
+                    media.dataset.src = formatImageUrl(items[i].url, 600);
+                }
+                container.appendChild(media);
+                mediaElements.push(media);
+            }
+
+            let currentIndex = 0;
+            setInterval(() => {
+                const nextIndex = (currentIndex + 1) % mediaElements.length;
+                const nextMedia = mediaElements[nextIndex];
+
+                if (nextMedia.dataset.src && !nextMedia.src) {
+                    nextMedia.src = nextMedia.dataset.src;
+                }
+
+                mediaElements[currentIndex].classList.remove("active");
+                nextMedia.classList.add("active");
+                
+                updateCardOrientation(cardElem, nextMedia);
+                currentIndex = nextIndex;
+            }, 3500);
+        }
+
+        function handleTouchStart(e, uniqueId) {
+            cancelPress();
+            pressTimer = window.setTimeout(() => {
+                openActionMenu(uniqueId);
+            }, 600);
+        }
+
+        function cancelPress() {
+            if (pressTimer) clearTimeout(pressTimer);
+        }
+
+        function openActionMenu(uniqueId) {
+            currentSelectedId = uniqueId;
+            document.getElementById("menu-overlay").style.display = "block";
+            document.getElementById("custom-action-menu").classList.add("active");
+            if(navigator.vibrate) navigator.vibrate(50);
+        }
+
+        function closeActionMenu() {
+            document.getElementById("menu-overlay").style.display = "none";
+            document.getElementById("custom-action-menu").classList.remove("active");
+        }
+
+        function openGallery(key, title) {
+            currentGalleryKey = key;
+            currentGalleryTitle = title;
+            
+            const items = eventImagesStore[key] || [];
+            const modal = document.getElementById("gallery-modal");
+            const modalTitle = document.getElementById("modal-title-text");
+            const masonryContainer = document.getElementById("modal-masonry-content");
+
+            modalTitle.innerText = title;
+            masonryContainer.innerHTML = "";
+
+            if (items.length === 0) {
+                masonryContainer.innerHTML = "<p style='color:#888; text-align:center; width:100%; padding:40px 0;'>No Photos Available</p>";
+            } else {
+                items.forEach((item, i) => {
+                    const box = document.createElement("div");
+                    box.className = "masonry-item";
+                    
+                    const uniqueId = getUniqueId(item.url);
+                    box.id = `media-id-${uniqueId}`;
+                    
+                    const mediaUrl = isVideo(item.url) ? item.url : formatImageUrl(item.url, 800);
+                    
+                    if (isVideo(item.url)) {
+                        box.innerHTML = `<video src="${mediaUrl}" controls autoplay muted loop playsinline style="width:100%; height:auto; display:block; object-fit:cover; pointer-events:none;"></video>`;
+                    } else {
+                        box.innerHTML = `<img src="${mediaUrl}" alt="Media ${i+1}" loading="lazy">`;
+                    }
+
+                    box.addEventListener('touchstart', (e) => handleTouchStart(e, uniqueId), {passive: true});
+                    box.addEventListener('touchend', cancelPress);
+                    box.addEventListener('touchmove', cancelPress);
+                    
+                    box.addEventListener('mousedown', (e) => handleTouchStart(e, uniqueId));
+                    box.addEventListener('mouseup', cancelPress);
+                    box.addEventListener('mouseleave', cancelPress);
+
+                    masonryContainer.appendChild(box);
+                });
+            }
+
+            modal.style.display = "flex";
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeGallery() {
+            const modal = document.getElementById("gallery-modal");
+            const videos = modal.querySelectorAll("video");
+            videos.forEach(v => v.pause());
+            modal.style.display = "none";
+            document.body.style.overflow = "auto";
+            
+            const url = new URL(window.location);
+            url.search = '';
+            window.history.replaceState({}, document.title, url);
+        }
+
+        /* --- BUTTON 1: INQUIRY ON WHATSAPP --- */
+        document.getElementById("btn-inquiry").addEventListener("click", () => {
+            const baseUrl = window.location.origin + window.location.pathname;
+            const siteLink = `${baseUrl}?gallery=${currentGalleryKey}&id=${currentSelectedId}`;
+            
+            const message = `*AKR TENT & DECORATION SURAJPUR*\n\n${siteLink}\n\nGive me details about this setup`;
+            const whatsappUrl = `https://wa.me/918839185475?text=${encodeURIComponent(message)}`;
+            
+            document.getElementById("btn-inquiry").href = whatsappUrl;
+            closeActionMenu();
+        });
+
+        /* --- BUTTON 2: SHARE ON WHATSAPP --- */
+        document.getElementById("btn-whatsapp-share").addEventListener("click", () => {
+            const baseUrl = window.location.origin + window.location.pathname;
+            const siteLink = `${baseUrl}?gallery=${currentGalleryKey}&id=${currentSelectedId}`;
+            
+            const message = `*AKR TENT & DECORATION SURAJPUR*\nCheck out this amazing ${currentGalleryTitle} setup!\n${siteLink}`;
+            const whatsappShareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+            
+            document.getElementById("btn-whatsapp-share").href = whatsappShareUrl;
+            closeActionMenu();
+        });
+
+        /* --- BUTTON 3: OTHER SHARE / COPY LINK --- */
+        document.getElementById("btn-other-share").addEventListener("click", async () => {
+            const baseUrl = window.location.origin + window.location.pathname;
+            const siteLink = `${baseUrl}?gallery=${currentGalleryKey}&id=${currentSelectedId}`;
+            const shareData = {
+                title: 'AKR Tent & Decoration',
+                text: `AKR TENT & DECORATION SURAJPUR\nCheck out this beautiful ${currentGalleryTitle} setup!`,
+                url: siteLink
+            };
+
+            if (navigator.canShare && navigator.canShare(shareData)) {
+                try {
+                    await navigator.share(shareData);
+                } catch (err) {
+                    console.log("Share cancelled", err);
+                }
+            } else {
+                navigator.clipboard.writeText(siteLink).then(() => {
+                    showToast();
+                }).catch(() => {
+                    alert("Copy link: \n" + siteLink);
+                });
+            }
+            closeActionMenu();
+        });
+
+        function showToast() {
+            const toast = document.getElementById("copy-toast");
+            toast.classList.add("show");
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 2500);
+        }
+
+        async function loadWeddingGallery() {
+            try {
+                const response = await fetch(SCRIPT_URL);
+                const data = await response.json();
+
+                Object.keys(categories).forEach(containerId => {
+                    const { tag, cardId } = categories[containerId];
+                    const matchedItems = data.filter(item => {
+                        const tags = (item.tags || "").toLowerCase();
+                        return tags.includes(tag);
+                    });
+                    
+                    eventImagesStore[containerId] = matchedItems;
+                    createCarousel(containerId, cardId, matchedItems);
+                });
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const sharedGallery = urlParams.get('gallery');
+                const sharedId = urlParams.get('id');
+
+                if(sharedGallery && categories[sharedGallery]) {
+                    setTimeout(() => {
+                        const cardElement = document.getElementById(categories[sharedGallery].cardId);
+                        const title = cardElement ? cardElement.querySelector('h3').innerText : "Event Gallery";
+                        
+                        openGallery(sharedGallery, title);
+
+                        if(sharedId) {
+                            setTimeout(() => {
+                                const targetMediaId = `media-id-${sharedId}`;
+                                const targetMediaElem = document.getElementById(targetMediaId);
+                                
+                                if(targetMediaElem) {
+                                    targetMediaElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                    targetMediaElem.classList.add('highlight-active');
+                                }
+                            }, 400);
+                        }
+
+                    }, 500);
+                }
+
+            } catch (err) {
+                console.error("Error loading images:", err);
+            }
+        }
+
+        loadWeddingGallery();
+    </script>
+</body>
+</html>
